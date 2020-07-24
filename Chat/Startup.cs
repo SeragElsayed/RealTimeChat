@@ -45,6 +45,7 @@ namespace Chat
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 6;
                 options.Password.RequiredUniqueChars = 0;
+                
 
             })
                 .AddEntityFrameworkStores<ChatContext>()
