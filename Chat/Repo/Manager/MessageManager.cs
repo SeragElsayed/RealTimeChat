@@ -20,10 +20,14 @@ namespace Chat.Repo.Manager
             DB.SaveChanges();
             return true;
         } 
-        public IEnumerable<Message> GetMessagesByUserId(string UserId)
+        public IEnumerable<Message> GetMessagesByUsersId(string SenderId,string ReceiverId)
         {
             var Messages = DB.Messages
-                            .Where<Message>(m => (m.SenderId == UserId) || (m.ReceiverId == UserId))
+                            .Where<Message>(
+                                m =>( 
+                                ((m.SenderId == SenderId) && (m.ReceiverId == ReceiverId)) || 
+                                ((m.SenderId == ReceiverId) && (m.ReceiverId == SenderId))
+                                ))
                              .OrderBy(me => me.TimeStamp);
             return Messages;
         }
