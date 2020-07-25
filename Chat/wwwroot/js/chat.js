@@ -110,11 +110,33 @@ connection.start().then(function () {
 });
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
-    var user = document.getElementById("Sender").value;
-    var message = document.getElementById("messageInput").value;
-    connection.invoke("SendMessage", user, message).catch(function (err) {
-        return console.error(err.toString());
-    });
+    let SenderId = document.getElementById("Sender").value;
+    let ReceiverId = document.getElementById("Reciever").value;
+    var Content = document.getElementById("messageInput").value;
+    let Message = {
+        SenderId: SenderId,
+        ReceiverId: ReceiverId,
+        Content: Content
+    }
+    console.log("new message", Message)
+    axios({
+        method: 'post',
+        url: '/Msg/Post',
+        data: Message
+    })
+     .then((response) => {
+         console.log(response);
+         document.getElementById("messageInput").value = "";
+         let sentMessage=senderMessage(response.data.content)
+         let messagelist = document.getElementById("messagesList")
+         messagelist.appendChild(sentMessage)
+    }, (error) => {
+        console.log(error);
+     });
+
+    //connection.invoke("SendMessage", user, message).catch(function (err) {
+    //    return console.error(err.toString());
+    //});
     document.getElementById("messageInput").value = "";
     event.preventDefault();
 });

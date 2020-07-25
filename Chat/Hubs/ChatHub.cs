@@ -19,15 +19,17 @@ namespace Chat.Hubs
             ChatContext = _ChatContext;
             _httpContextAccessor = httpContextAccessor;
         }
+        
         //[HubMethodName("sendMessage")]
         public async Task SendMessage(string user, string message)
         {
             await Clients.All.SendAsync("ReceiveMessage", user, message);
         }
-        public async Task SendPrivateMessage(Message message)
+        public async Task SendPrivateMessage(Message NewMessage)
         {
 
-            await Clients.All.SendAsync("ReceiveMessage", message);
+            await Clients.User(NewMessage.ReceiverId).SendAsync("ReceiveMessage", NewMessage);
+
         }
         public override Task OnConnectedAsync()
         {

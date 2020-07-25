@@ -38,9 +38,11 @@ namespace Chat.Controllers
 
             if (isSavedInDB == false)
                 return BadRequest();
-            _chatHubCTX.Clients.User(NewMessage.ReceiverId).SendAsync("ReceiveMessage", NewMessage);
 
-            return Ok();
+            //sending messagge to reciver using chathub
+            _chatHubCTX.Clients.User(NewMessage.ReceiverId).SendAsync("ReceiveMessage", NewMessage);
+            
+            return Ok(NewMessage);
 
         }
 

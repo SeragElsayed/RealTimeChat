@@ -12,7 +12,7 @@ namespace Chat.Entities
         public int MessageId { get; set; }
         [Required]
         public string Content { get; set; }
-        [Required]
+
         public DateTime TimeStamp { get; set; } = DateTime.Now;
 
         [ForeignKey("ChatUser")]
