@@ -133,18 +133,16 @@ document.getElementById("sendButton").addEventListener("click", function (event)
     }, (error) => {
         console.log(error);
      });
-
-    //connection.invoke("SendMessage", user, message).catch(function (err) {
-    //    return console.error(err.toString());
-    //});
     document.getElementById("messageInput").value = "";
     event.preventDefault();
 });
 
 //set reciever
 document.getElementById("ContactList").addEventListener("click", function (event) {
-    var user = event.target;
-    console.log(user)
-    document.getElementById("Reciever").value = user.attr("id");
+    let Receiver = event.target;
+    let RecieverIP = document.getElementById("Reciever").value
+    RecieverIP.value = Receiver.attr("id");
+    console.log(Receiver, RecieverIP)
+
 
 });
