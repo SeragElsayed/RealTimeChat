@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Chat.Entities;
 using Chat.Hubs;
+using Chat.Repo;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -11,24 +12,27 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Chat.Controllers
 {
-    public class MessagesController : Controller
+    [ApiController]
+    public class MessagesController : ControllerBase
     {
         private readonly IHubContext<ChatHub> _chatHubCTX;
-        public MessagesController(IHubContext<ChatHub> chatHubCTX)
+        private readonly IMessageManager MessageManager;
+
+        public MessagesController(IHubContext<ChatHub> chatHubCTX,IMessageManager _MsgManager)
         {
             _chatHubCTX = chatHubCTX;
+            MessageManager = _MsgManager;
         }
-        // GET: /<controller>/
+        
         public IActionResult PostNewMessage(Message NewMessage )
         {
-            
+            return Ok();
 
-            return View();
         }
         public IActionResult GetOldMessages(string SenderId, string ReceiverId)
         {
+            return Ok();
 
-            return View();
         }
     }
 }

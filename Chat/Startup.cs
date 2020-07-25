@@ -6,10 +6,14 @@ using System.Threading.Tasks;
 using Chat.Data;
 using Chat.Entities;
 using Chat.Hubs;
+using Chat.Repo;
+using Chat.Repo.IManager;
+using Chat.Repo.Manager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,8 +54,10 @@ namespace Chat
             })
                 .AddEntityFrameworkStores<ChatContext>()
                  .AddDefaultUI();
-       
 
+            //services.AddScoped<IHubContext<ChatHub>, ChatHub>();
+            services.AddScoped<IMessageManager, MessageManager>();
+            services.AddScoped<IConnectedUsersManager, ConnectedUsersManager>();
 
         }
 

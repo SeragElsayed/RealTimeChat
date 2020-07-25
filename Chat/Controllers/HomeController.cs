@@ -24,7 +24,7 @@ namespace Chat.Controllers
         {
             var AllUsers = ChatContext.ChatUsers.ToList();
             var CurrentUserId = UserManager.GetUserId(User);
-            //var CurrentUser = UserManager.GetUserName(User);
+
             ViewBag.AllUsers = AllUsers;
             ViewBag.CurrentUserId = CurrentUserId;
             return View();

@@ -18,15 +18,7 @@ const formatMessage = function (user, message) {
     let senderId = document.getElementById("Sender").value;
     let isSentBySender = (user === senderId);
     return isSentBySender;
-    //let messagelist = document.getElementById("messagesList")
-    //let newmessage;
-    //if (isSentBySender) {
-    //    newmessage = senderMessage(message);
-    //    messagelist.appendChild(newmessage)
-    //} else {
-    //    newmessage = recieverMessage(message);
-    //    messagelist.appendChild(newmessage)
-    //}
+   
 
 }
 //sender message
@@ -108,12 +100,6 @@ connection.on("ReceiveMessage", function (user, message) {
 
     }
     console.log(user, message, newmessage, isSentBySender);
-
-    //var wrapper = document.createElement('div');
-    //wrapper.innerHTML = `<div>${message}</div>`;
-    //var div = wrapper.firstChild;
-    //document.getElementById("mesgs").appendChild(wrapper);
-    //console.log(user, message, wrapper, div);
 
 });
 

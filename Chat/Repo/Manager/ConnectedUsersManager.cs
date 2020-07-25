@@ -1,5 +1,6 @@
 ﻿using Chat.Data;
 using Chat.Entities;
+using Chat.Repo.IManager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Chat.Repo.Manager
 {
-    public class ConnectedUsersManager
+    public class ConnectedUsersManager:IConnectedUsersManager
     {
         ChatContext DB;
         public ConnectedUsersManager(ChatContext db)
