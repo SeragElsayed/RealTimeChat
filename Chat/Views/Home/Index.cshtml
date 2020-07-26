@@ -25,10 +25,15 @@
                     <div id="ContactList" class="inbox_chat">
                         @foreach (var user in AllUsers)
                         {
+                            if (user.Id == CurrentUserId)
+                                continue;
                             <div  class="chat_list  ">
                                 <div id="@user.Id" class="chat_people ">
 
-                                    @user.UserName
+                                    @user.UserName,
+                                    <P id="status @user.Id">
+                                    @user.Status.ToString()
+                                    </P>
 
                                 </div>
                             </div>
@@ -63,7 +68,7 @@
                     <div class="type_msg">
                         <div class="input_msg_write">
                             <input readonly hidden type="text" value="@CurrentUserId" id="Sender" />
-                            <input readonly hidden type="text" value="@AllUsers.First().Id" id="Reciever" />
+                            <input readonly hidden type="text" value="@AllUsers.Where(u=>u.Id!=CurrentUserId).FirstOrDefault().Id" id="Reciever" />
                             <input id="messageInput" type="text" class="write_msg" placeholder="Type a message" />
                             <button id="sendButton" class="msg_send_btn" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
                         </div>
@@ -77,6 +82,7 @@
     </div>
     <script src="~/lib/signalr.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="~/lib/moment/dist/moment.js"></script>
     <script src="~/js/chat.js"></script>
 </body>
 

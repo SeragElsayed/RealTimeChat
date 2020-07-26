@@ -6,13 +6,47 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 document.getElementById("sendButton").disabled = true;
 
 const elementsAttriuttes = {
-    incomingMessage: "incoming_msg",
-    outgoingMessage: "outgoing_msg",
-    recMessage: "received_msg",
-    sentMessage: "sent_msg",
-    timeDate:"time_date"
+    incoming_msg: "incoming_msg",
+    outgoing_msg: "outgoing_msg",
+    received_msg: "received_msg",
+    sent_msg: "sent_msg",
+    received_withd_msg:"received_withd_msg",
+    time_date:"time_date"
 }
+window.addEventListener("load", () => {
+    let ContactList = document.getElementById("ContactList");
+    let defaultReceiver = ContactList.firstElementChild.firstElementChild;
+    let defaultReceiverId = defaultReceiver.id;
+    let RecieverIP = document.getElementById("Reciever")
+    let SenderIP = document.getElementById("Sender")
+    RecieverIP.value = defaultReceiverId
 
+    axios.get(`/Msg/Get/${SenderIP.value}/${RecieverIP.value}`)
+        .then((response) => {
+            console.log(response);
+            let SenderIP = document.getElementById("Sender")
+            let message
+
+            let messagelist = document.getElementById("messagesList")
+            messagelist.innerHTML = ''
+            console.log(response.data)
+            if (response.data.length == 0) {
+                messagelist.innerHTML = "No Messages yet"
+                return;
+            }
+            response.data.forEach((item, index) => {
+
+                if (item.senderId == SenderIP.value)
+                    message = senderMessage(item)
+                else
+                    message = recieverMessage(item)
+
+                messagelist.appendChild(message)
+            })
+        }, (error) => {
+            console.log(error);
+        });
+})
 //format message
 const formatMessage = function (user, message) {
     let senderId = document.getElementById("Sender").value;
@@ -26,25 +60,28 @@ const senderMessage = function (message) {
 
     let outerdiv = document.createElement("div");
     let outerdivclass = document.createAttribute("class");
-    outerdivclass.value = elementsAttriuttes.outgoingMessage;
+    outerdivclass.value = elementsAttriuttes.outgoing_msg;
     outerdiv.setAttributeNode(outerdivclass);
 
     let innerdiv = document.createElement("div");
     let innerdivclass = document.createAttribute("class");
-    innerdivclass.value = elementsAttriuttes.sentMessage;
+    innerdivclass.value = elementsAttriuttes.sent_msg;
     innerdiv.setAttributeNode(innerdivclass);
 
     let messagetext = document.createElement("p");
-    messagetext.textContent += message; 
+    messagetext.textContent += message.content; 
 
     let timedate = document.createElement("span");
     let timedateclass = document.createAttribute("class");
-    timedateclass.value = elementsAttriuttes.timeDate;
+    timedateclass.value = elementsAttriuttes.time_date;
     timedate.setAttributeNode(timedateclass);
+    timedate.textContent += message.timeStamp; 
+
 
     innerdiv.appendChild(messagetext);
     innerdiv.appendChild(timedate)
     outerdiv.appendChild(innerdiv);
+    console.log(outerdiv);
 
     return outerdiv;
 }
@@ -54,52 +91,57 @@ const recieverMessage = function (message) {
 
     let outerdiv = document.createElement("div");
     let outerdivclass = document.createAttribute("class");
-    outerdivclass.value = elementsAttriuttes.incomingMessage;
+    outerdivclass.value = elementsAttriuttes.incoming_msg;
     outerdiv.setAttributeNode(outerdivclass);
 
     let innerdiv = document.createElement("div");
     let innerdivclass = document.createAttribute("class");
-    innerdivclass.value = elementsAttriuttes.recMessage;
+    innerdivclass.value = elementsAttriuttes.received_msg;
     innerdiv.setAttributeNode(innerdivclass);
 
+    let innerinnerdiv = document.createElement("div");
+    let innerinnerdivclass = document.createAttribute("class");
+    innerinnerdivclass.value = elementsAttriuttes.received_withd_msg;
+    innerinnerdiv.setAttributeNode(innerinnerdivclass);
+
     let messagetext = document.createElement("p");
-    messagetext.textContent += message; 
+    messagetext.textContent += message.content; 
 
 
     let timedate = document.createElement("span");
     let timedateclass = document.createAttribute("class");
-    timedateclass.value = elementsAttriuttes.timeDate;
+    timedateclass.value = elementsAttriuttes.time_date;
     timedate.setAttributeNode(timedateclass);
+    timedate.textContent += message.timeStamp; 
 
-    innerdiv.appendChild(messagetext);
-    innerdiv.appendChild(timedate)
+
+    innerinnerdiv.appendChild(messagetext);
+    innerinnerdiv.appendChild(timedate);
+    innerdiv.appendChild(innerinnerdiv);
     outerdiv.appendChild(innerdiv);
+
+    console.log(outerdiv)
 
     return outerdiv;
 }
 
-connection.on("ReceiveMessage", function (user, message) {
+connection.on("ReceiveMessage", function (message) {
    
-    console.log(user, message);
-    let isSentBySender = formatMessage(user, message);
+    console.log( message,"recieve message response");
+   // let isSentBySender = formatMessage(user, message);
     let messagelist = document.getElementById("messagesList")
     let newmessage;
-    console.log(user, message, newmessage, isSentBySender);
+     newmessage = recieverMessage(message);
+     messagelist.appendChild(newmessage)
+     console.log(newmessage);
+});
 
-    if (isSentBySender) {
-        console.log(newmessage,"ffffffffffff");
+connection.on("ChangeStatus", function (status, userId) {
+    let userStatusById = document.getElementById(`status ${userId.toString()}`);
+    userStatusById.textContent = "";
+    userStatusById.textContent += status;
+    console.log(status, userId, userStatusById, "changge status response")
 
-        newmessage = senderMessage(message);
-        messagelist.appendChild(newmessage)
-        console.log( newmessage);
-
-    } else {
-        newmessage = recieverMessage(message);
-        messagelist.appendChild(newmessage)
-        console.log(newmessage);
-
-    }
-    console.log(user, message, newmessage, isSentBySender);
 
 });
 
@@ -125,9 +167,9 @@ document.getElementById("sendButton").addEventListener("click", function (event)
         data: Message
     })
      .then((response) => {
-         console.log(response);
+         console.log(response,"send mesasgeg response ");
          document.getElementById("messageInput").value = "";
-         let sentMessage=senderMessage(response.data.content)
+         let sentMessage=senderMessage(response.data)
          let messagelist = document.getElementById("messagesList")
          messagelist.appendChild(sentMessage)
     }, (error) => {
@@ -140,9 +182,35 @@ document.getElementById("sendButton").addEventListener("click", function (event)
 //set reciever
 document.getElementById("ContactList").addEventListener("click", function (event) {
     let Receiver = event.target;
-    let RecieverIP = document.getElementById("Reciever").value
-    RecieverIP.value = Receiver.attr("id");
-    console.log(Receiver, RecieverIP)
+    let RecieverIP = document.getElementById("Reciever")
+    let SenderIP = document.getElementById("Sender")
+    RecieverIP.value = Receiver.id.toString()
+    console.log(SenderIP.value, RecieverIP.value)
+    //Receiver.attr("id");
+    axios.get(`/Msg/Get/${SenderIP.value}/${RecieverIP.value}`)
+        .then((response) => {
+            console.log(response);
+            let SenderIP = document.getElementById("Sender")
+            let message
 
+            let messagelist = document.getElementById("messagesList")
+            messagelist.innerHTML = ''
+            console.log(response.data)
+            if (response.data.length == 0) {
+                messagelist.innerHTML="No Messages yet"
+                return;
+            }
+            response.data.forEach((item, index) => {
+
+                if (item.senderId == SenderIP.value)
+                    message = senderMessage(item)
+                else
+                    message = recieverMessage(item)
+
+                messagelist.appendChild(message)
+            })
+        }, (error) => {
+            console.log(error);
+        });
 
 });

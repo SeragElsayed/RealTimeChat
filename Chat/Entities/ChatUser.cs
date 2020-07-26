@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Chat.Models;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,8 @@ namespace Chat.Entities
         {
 
         }
-        
+        public ChatUserStatus Status { get; set; } = ChatUserStatus.Offline;
+
         public virtual ICollection<Message> Messages { get; set; } = new HashSet<Message>();
 
 

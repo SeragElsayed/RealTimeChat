@@ -24,6 +24,15 @@ namespace Chat.Controllers
         {
             var AllUsers = ChatContext.ChatUsers.ToList();
             var CurrentUserId = UserManager.GetUserId(User);
+            var connectedlist = ChatContext.ConnectedUsers.ToList();
+            foreach (var item in AllUsers)
+            {
+               var UserConnected= connectedlist.Any(u => u.UserId == item.Id);
+                if (UserConnected==false)
+                {
+                    item.Status = Models.ChatUserStatus.Offline;
+                }
+            }
 
             ViewBag.AllUsers = AllUsers;
             ViewBag.CurrentUserId = CurrentUserId;

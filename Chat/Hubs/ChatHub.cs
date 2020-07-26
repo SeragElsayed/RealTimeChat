@@ -1,5 +1,6 @@
 ﻿using Chat.Data;
 using Chat.Entities;
+using Chat.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -37,6 +38,7 @@ namespace Chat.Hubs
             var CurrentConnectionId = Context.ConnectionId;
             ChatContext.ConnectedUsers.AddAsync(new ConnectedUsers() { UserId=CurrentUserId,ConnectionId=CurrentConnectionId});
             ChatContext.SaveChanges();
+            Clients.All.SendAsync("ChangeStatus", ChatUserStatus.Online.ToString(), CurrentUserId);
             return base.OnConnectedAsync();
         }
         public override Task OnDisconnectedAsync(Exception exception)
@@ -46,6 +48,7 @@ namespace Chat.Hubs
             var CurrentConnectedUser = ChatContext.ConnectedUsers.FirstOrDefault(u => (u.ConnectionId == CurrentConnectionId) && (u.UserId==CurrentUserId));
             ChatContext.ConnectedUsers.Remove(CurrentConnectedUser);
             ChatContext.SaveChanges();
+            Clients.All.SendAsync("ChangeStatus", ChatUserStatus.Offline.ToString(), CurrentUserId);
             return base.OnDisconnectedAsync(exception);
         }
     }

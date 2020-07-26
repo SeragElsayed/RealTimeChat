@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Chat.Models
 {
-    public enum UserStatus
+    public enum ChatUserStatus
     {
         Online,
         Offline

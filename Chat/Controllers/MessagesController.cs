@@ -26,6 +26,7 @@ namespace Chat.Controllers
         {
             _chatHubCTX = chatHubCTX;
             MessageManager = _MsgManager;
+            _httpContextAccessor = httpContextAccessor;
         }
         [Route("Msg/Post")]
         [HttpPost]

@@ -9,6 +9,13 @@
         "dist/browser/signalr.js",
         "dist/browser/signalr.min.js"
       ]
+    },
+    {
+      "library": "moment@2.27.0",
+      "destination": "wwwroot/lib/moment/",
+      "files": [
+        "dist/moment.js"
+      ]
     }
   ]
 }
