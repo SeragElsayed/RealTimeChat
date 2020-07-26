@@ -32,7 +32,16 @@
 
                                     @user.UserName,
                                     <P id="status @user.Id">
-                                    @user.Status.ToString()
+                                        @user.Status.ToString()
+                                        @if (@user.Status.ToString() == "Online")
+                                        {
+                                            <img src="https://img.icons8.com/color/48/000000/connection-status-on--v1.png" style="width:20px"/>
+                                        }
+                                        else
+                                        {
+                                            <img src="https://img.icons8.com/dusk/64/000000/offline.png" style="width:20px"/>
+                                        }
+
                                     </P>
 
                                 </div>

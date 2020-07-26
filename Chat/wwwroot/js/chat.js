@@ -198,7 +198,15 @@ const onClickSendButton = function (event) {
     document.getElementById("messageInput").value = "";
     event.preventDefault();
 }
-document.getElementById("sendButton").addEventListener("click", onClickSendButton );
+document.getElementById("sendButton").addEventListener("click", onClickSendButton);
+
+//Enter key to send data
+document.getElementById("messageInput").addEventListener("keyup", function (event) {
+    event.preventDefault();
+    if (event.keyCode === 13) {
+        onClickSendButton()
+    }
+});
 
 const onClickContact = function (event) {
     let Receiver = event.target;
@@ -212,4 +220,7 @@ const onClickContact = function (event) {
 }
 //set reciever
 document.getElementById("ContactList").addEventListener("click", onClickContact);
+
+
+//scroll in new come
 
