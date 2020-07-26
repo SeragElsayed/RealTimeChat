@@ -21,9 +21,8 @@ namespace Chat.Repo.Manager
             DB.SaveChanges();
             return true;
         }
-        public bool DeleteConnectedUserByUserConnectionId(string UserId,string ConnectionId)
+        public bool DeleteConnectedUser(ConnectedUsers CurrentConnectedUser)
         {
-            var CurrentConnectedUser = DB.ConnectedUsers.FirstOrDefault(u => (u.ConnectionId == ConnectionId) && (u.UserId == UserId));
             DB.ConnectedUsers.Remove(CurrentConnectedUser);
             DB.SaveChanges();
             return true;

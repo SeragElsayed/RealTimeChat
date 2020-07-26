@@ -1,6 +1,7 @@
 ﻿using Chat.Data;
 using Chat.Entities;
 using Chat.Models;
+using Chat.Repo.IManager;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -14,31 +15,34 @@ namespace Chat.Hubs
     public class ChatHub:Hub
     {
         ChatContext ChatContext;
+        IConnectedUsersManager ConnectedUserManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public ChatHub(ChatContext _ChatContext, IHttpContextAccessor httpContextAccessor)
+        public ChatHub(ChatContext _ChatContext, 
+                        IHttpContextAccessor httpContextAccessor,
+                        IConnectedUsersManager _ConnectedUserManager)
         {
             ChatContext = _ChatContext;
             _httpContextAccessor = httpContextAccessor;
+            ConnectedUserManager = _ConnectedUserManager;
         }
         
-        //[HubMethodName("sendMessage")]
-        public async Task SendMessage(string user, string message)
+        
+        public void IsTyping(string SenderId,string ReceiverId,bool IsTyping)
         {
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
-        }
-        public async Task SendPrivateMessage(Message NewMessage)
-        {
-
-            await Clients.User(NewMessage.ReceiverId).SendAsync("ReceiveMessage", NewMessage);
+            Clients.User(ReceiverId).SendAsync("IsTyping",SenderId,IsTyping);
 
         }
         public override Task OnConnectedAsync()
         {
             var CurrentUserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var CurrentConnectionId = Context.ConnectionId;
-            ChatContext.ConnectedUsers.AddAsync(new ConnectedUsers() { UserId=CurrentUserId,ConnectionId=CurrentConnectionId});
-            ChatContext.SaveChanges();
+
+            var NewConnectedUser = new ConnectedUsers() { UserId = CurrentUserId, ConnectionId = CurrentConnectionId };
+            
+            ConnectedUserManager.AddNewConnectedUser(NewConnectedUser);
+            
             Clients.All.SendAsync("ChangeStatus", ChatUserStatus.Online.ToString(), CurrentUserId);
+           
             return base.OnConnectedAsync();
         }
         public override Task OnDisconnectedAsync(Exception exception)
@@ -46,8 +50,9 @@ namespace Chat.Hubs
             var CurrentUserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var CurrentConnectionId = Context.ConnectionId;
             var CurrentConnectedUser = ChatContext.ConnectedUsers.FirstOrDefault(u => (u.ConnectionId == CurrentConnectionId) && (u.UserId==CurrentUserId));
-            ChatContext.ConnectedUsers.Remove(CurrentConnectedUser);
-            ChatContext.SaveChanges();
+            
+            ConnectedUserManager.DeleteConnectedUser(CurrentConnectedUser);
+
             Clients.All.SendAsync("ChangeStatus", ChatUserStatus.Offline.ToString(), CurrentUserId);
             return base.OnDisconnectedAsync(exception);
         }
